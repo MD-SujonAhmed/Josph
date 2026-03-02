@@ -2,9 +2,10 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.utils import timezone
 from datetime import timedelta
+from django.contrib.auth.password_validation import validate_password
 import random
 
-from .models import Users
+from .models import Users,FAQ
 
 
 class LoginSerializer(serializers.Serializer):
@@ -42,3 +43,35 @@ class OTPVerifySerializer(serializers.Serializer):
 class ResetPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
     new_password = serializers.CharField(write_only=True)
+    
+
+class FAQSerializers(serializers.ModelSerializer):
+    class Meta:
+        model=FAQ
+        fields='__all__'
+        
+class ResetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    new_password = serializers.CharField(
+        write_only=True, 
+        required=True, 
+        style={'input_type': 'password'}
+    )
+    confirm_password = serializers.CharField(
+        write_only=True, 
+        required=True, 
+        style={'input_type': 'password'}
+    )
+
+    def validate(self, data):
+        # 1. Check if both passwords match
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+
+        # 2. Check password strength (Optional but recommended)
+        try:
+            validate_password(data['new_password'])
+        except Exception as e:
+            raise serializers.ValidationError({"password": list(e.messages)})
+
+        return data
