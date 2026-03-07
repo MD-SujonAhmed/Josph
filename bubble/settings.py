@@ -44,10 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'corsheaders',
-
     'users',
     'Dashboards',
 ]
@@ -88,6 +86,7 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+CSRF_TRUSTED_ORIGINS = ['https://test18.fireai.agency']
 
 # ==========================
 # CORS
