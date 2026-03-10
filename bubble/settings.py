@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'Dashboards',
+    'weather '
 ]
 
 MIDDLEWARE = [
