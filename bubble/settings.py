@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'Dashboards',
-    'bookinge'
+    'bookinge',
+    'support'
 ]
 
 MIDDLEWARE = [
@@ -179,3 +180,7 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AirTable
+AIRTABLE_API_KEY = os.getenv('AIRTABLE_API_KEY')
+AIRTABLE_BASE_ID = os.getenv('AIRTABLE_BASE_ID')

@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .utils import sync_to_airtable
 
 class BookingInquiry(models.Model):
 
@@ -76,3 +79,9 @@ class RezgoLocation(models.Model):
 
     def __str__(self):
         return f"{self.city_name} (ID: {self.rezgo_uid})"
+    
+
+@receiver(post_save, sender=BookingInquiry)
+def auto_sync_airtable(sender, instance, created, **kwargs):
+    if created: # শুধুমাত্র নতুন ইনকোয়ারি তৈরি হলেই এয়ারটেবলে যাবে
+        sync_to_airtable(instance)

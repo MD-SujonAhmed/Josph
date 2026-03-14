@@ -47,7 +47,6 @@ def check_rezgo_availability(item_uid, date_string, preferred_time=None):
     except:
         return None
 
-
 def commit_rezgo_booking(data, item_uid):
     """
     Final function used to confirm a booking in Rezgo.
@@ -98,3 +97,42 @@ def commit_rezgo_booking(data, item_uid):
     except Exception as e:
         print(f"Commit Error: {e}")
         return None
+    
+
+def sync_to_airtable(inquiry_obj):
+    """
+    নতুন ইনকোয়ারি তৈরি হলে সেটি অটোমেটিক এয়ারটেবলে পাঠানোর ফাংশন।
+    """
+    if not settings.AIRTABLE_API_KEY or not settings.AIRTABLE_BASE_ID:
+        print("Airtable keys are missing!")
+        return
+
+    # Inquiries হলো এয়ারটেবল টেবিলের নাম
+    url = f"https://api.airtable.com/v0/{settings.AIRTABLE_BASE_ID}/Inquiries"
+    
+    headers = {
+        "Authorization": f"Bearer {settings.AIRTABLE_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    # এয়ারটেবলের কলামগুলোর নামের সাথে ডাটা সাজানো
+    payload = {
+        "fields": {
+            "Name": inquiry_obj.name,
+            "Phone": inquiry_obj.phone,
+            "Email": inquiry_obj.email,
+            "Location": inquiry_obj.location,
+            "Date": str(inquiry_obj.preferred_date),
+            "Time": inquiry_obj.preferred_time,
+            "Status": "Available" if inquiry_obj.is_available else "Pending"
+        }
+    }
+    
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code == 200:
+            print("Successfully synced to Airtable!")
+        else:
+            print(f"Airtable Error: {response.text}")
+    except Exception as e:
+        print(f"Airtable Request Failed: {e}")

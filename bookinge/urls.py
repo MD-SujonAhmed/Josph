@@ -7,3 +7,6 @@ urlpatterns = [
     # 2. URL endpoint used by the Voice AI system (Vapi) for automatic bookings
     path("voice-booking/", voice_booking_handler, name="voice_booking"),
 ]
+
+
+print("Hello B")
